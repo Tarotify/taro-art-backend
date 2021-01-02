@@ -1,0 +1,14 @@
+{
+  "name": "taro-art-backend",
+  "version": "1.0.0",
+  "description": "taro-art-backend using nodejs and mongoDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Raymond Yao",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
