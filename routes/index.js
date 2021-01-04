@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', function (req, res) {
-  res.send('123')
+  res.send('1223')
 })
 
 module.exports = router
