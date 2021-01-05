@@ -5,5 +5,6 @@ const userRouter = require('./routes/users')
 
 app.use('/', indexRouter)
 app.use('/users', userRouter)
+app.use('/signIn', userRouter)
 
 app.listen(3000)
