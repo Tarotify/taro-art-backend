@@ -6,11 +6,20 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const config = require('config-lite')(__dirname)
 const pkg = require('./package.json')
+const form = require('express-formidable')
+const winston = require('winston')
+const expressWinston = require('express-winston')
 
 // 路由  把路由文件封装成函数加载过来 路由函数接收app来进行处理，不直接在index写路由入口
 
 // 设置静态文件目录
 app.use(express.static(path.join(__dirname, 'public')))
+
+// 处理表单及文件上传的中间件
+app.use(form({
+  uploadDir: path.join(__dirname, 'public/img'), // 上传文件目录
+  keepExtensions: true// 保留后缀
+}))
 
 // session 中间件
 app.use(session({
@@ -26,14 +35,44 @@ app.use(session({
   })
 }))
 
+// 正常请求的日志
+app.use(expressWinston.logger({
+  transports: [
+    new (winston.transports.Console)({
+      json: true,
+      colorize: true
+    }),
+    new winston.transports.File({
+      filename: 'logs/success.log'
+    })
+  ]
+}))
+// 路由
 routes(app)
+// 错误请求的日志
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorize: true
+    }),
+    new winston.transports.File({
+      filename: 'logs/error.log'
+    })
+  ]
+}))
 
 
 // 监听端口，启动程序
-app.listen(config.port, function () {
-  console.log(`${pkg.name} listening on port ${config.port}`)
-})
-
+if (module.parent) {
+  // 被 require，则导出 app 这样做可以实现：直接启动 index.js 则会监听端口启动程序，如果 index.js 被 require 了，则导出 app，通常用于测试。
+  module.exports = app
+} else {
+  // 监听端口，启动程序
+  app.listen(config.port, function () {
+    console.log(`${pkg.name} listening on port ${config.port}`)
+  })
+}
 
 
 // 注意：中间件的加载顺序很重要。如上面设置静态文件目录的中间件应该放到 routes(app) 之前加载，这样静态文件的请求就不会落到业务逻辑的路由里；flash 中间件应该放到 session 中间件之后加载，因为 flash 是基于 session 实现的。
