@@ -5,11 +5,11 @@ const { now } = require('moment')
 const path = require('path')
 const sha1 = require('sha1')
 const moment = require('moment')
-const jwt = require('../utils')
+const jwt = require('../utils/jwt')
 
 const UserModel = require('../models/users')
 const checkStatus = require('../middlewares/check').checkStatus
-
+const checkLoginStatus = require('../middlewares/check').checkLoginStatus
 // GET  登录页
 router.get('/test',  function (req, res, next) {
   res.send('test')
@@ -17,7 +17,7 @@ router.get('/test',  function (req, res, next) {
 
 
 // POST /signin 用户登录
-router.post('/signin', checkStatus, function (req, res, next) {
+router.post('/signin', function (req, res, next) {
   const email = req.fields.email
   const password = req.fields.password
 
@@ -41,7 +41,7 @@ router.post('/signin', checkStatus, function (req, res, next) {
 
 
 // POST /signout 用户录出
-router.post('/signout', checkStatus, function (req, res, next) {
+router.post('/signout', function (req, res, next) {
    // 清空 session 中用户信息
    req.session.user = null
 
@@ -49,7 +49,11 @@ router.post('/signout', checkStatus, function (req, res, next) {
    res.send({status: 200})
 })
 
-router.post('/signup', checkStatus, function (req, res, next) {
+
+/**
+ * 用户注册
+ */
+router.post('/signup', function (req, res, next) {
   console.log('signup')
   const email = req.fields.email
   const name = req.fields.name
@@ -95,7 +99,7 @@ router.post('/signup', checkStatus, function (req, res, next) {
     .catch((e) => {
       // 注册失败，异步删除上传的头像
       // fs.unlink(req.files.avatar.path)
-      // 用户名被占用则跳回注册页，而不是错误页
+      // 邮箱被占用则跳回注册页，而不是错误页
       if (e.message.match('duplicate key')) {
         // req.flash('error', '邮箱已注册')
         res.status(409).send({msg:'邮箱已注册'})
@@ -103,5 +107,35 @@ router.post('/signup', checkStatus, function (req, res, next) {
       next(e)
     })
 })
+
+
+
+/**
+ * 查看用户个人信息
+ */
+
+router.get('/profile/:id', checkLoginStatus, function(req,res,next) {
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router
