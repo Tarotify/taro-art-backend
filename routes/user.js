@@ -129,23 +129,38 @@ router.patch('/profile', checkLoginStatus, function(req,res,next) {
   let password = req.fields.password
   let new_password = req.fields.new_password
   let name = req.fields.name
-  let email = req.fields.email
+  let user = req.fields.email
 
-  if (new_password !== null && password !== new_password) {
-    password = new_password
+  let token = req.headers.token
+  let user_data = new jwt(token).verifyToken()
+
+  // 旧密码验证通过
+  if (user_data.password === sha1(password)) {
+    if (new_password !== null && password !== new_password) {
+      password = new_password
+    }
   }
+
   password = sha1(password)
+
 
   let new_info = {
     name,
     password,
     age
   }
-  UserModel.updateInfo(email,new_info)
+  UserModel.updateInfo(user,new_info)
     .then((result) => {
       console.log(result)
       if(result.modifiedCount === 1 && result.matchedCount === 1 ) {
-        res.status(200).send({status_code:200, data: new_info})
+
+         // 拿新user信息更新token 给回前端更新
+        user_data.password = new_info.password
+        user_data.age = new_info.age
+        user_data.name = new_info.name
+        let new_token = new jwt(user_data).generateToken()
+
+        res.status(200).send({status_code:200, data: {new_info}, token: new_token})
       }
       else if (result.modifiedCount === 0 && result.matchedCount === 1 ) {
         res.status(200).send({status_code:200, msg:'没有信息更新'})

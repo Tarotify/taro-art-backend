@@ -16,11 +16,11 @@ module.exports = {
   },
 
   // 更新信息
-  updateInfo: function  updateUser(email, update_data) {
+  updateInfo: function updateUser(user, update_data) {
     return User
       .updateOne(
         {
-          email: email
+          email: user
         },
         {
           $set:
