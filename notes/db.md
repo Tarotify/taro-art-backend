@@ -21,7 +21,8 @@ const User = mongolass.model('User', {
 下载地址 ：https://www.mongodb.com/try/download/community?tck=docs_server
 相关文章： https://zhuanlan.zhihu.com/p/98939669 
 
-
+# mogodb CRUD
+> https://docs.mongodb.com/manual/tutorial/insert-documents/
 -  Equality Condition
 ```js
 const cursor = db.collection('inventory').find({});

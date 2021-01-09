@@ -5,5 +5,5 @@ module.exports = {
     key: 'taro',
     maxAge: 2592000000
   },
-  mongodb: 'mongodb://localhost:27017/taro'  //mongodb 的地址，以 mongodb:// taro 为 db 名
+  mongodb: 'mongodb://localhost:27017/taro_db'  //mongodb 的地址，以 mongodb:// taro 为 db 名
 }

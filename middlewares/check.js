@@ -10,9 +10,9 @@
 module.exports = {
   checkStatus: function checkLogin (req, res, next){
     if (!req.session.user) {
-      return {islogin: 0}
+       {islogin: 0}
     }else{
-      return {islogin: 1}
+       {islogin: 1}
     }
     next()
   }

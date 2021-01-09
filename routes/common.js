@@ -47,38 +47,42 @@ router.post('/signout', checkStatus, function (req, res, next) {
 })
 
 router.post('/signup', checkStatus, function (req, res, next) {
+  console.log('123')
   const email = req.fields.email
   const name = req.fields.name
   const age = req.fields.age
   const phone = req.fields.phone
-  const avatar = req.files.avatar.path.split(path.sep).pop()
+  // const avatar = req.files.avatar.path.split(path.sep).pop()
   const password = req.fields.password
 
   // 明文密码加密
-  password = sha1(password) //sha1 并不是一种十分安全的加密方式，实际开发中可以使用更安全的 bcrypt 或 scrypt 加密。
+  // password = sha1(password) //sha1 并不是一种十分安全的加密方式，实际开发中可以使用更安全的 bcrypt 或 scrypt 加密。
 
   // 待写入数据库的用户信息
   let user = {
     name: name,
     password: password,
     email: email,
-    age: age,
-    avatar: avatar,
+    age: parseInt(age),
+    // avatar: avatar,
     phone: phone
   }
 
   UserModel.create(user)
     .then((result) => {
       // 此 user 是插入 mongodb 后的值，包含 _id
-      user = result.ops[0]
+      console.log(res.sessionID)
+      let new_user = result.ops[0]
       // 删除密码这种敏感信息，将用户信息存入 session
-      delete user.password
-      req.session.user = user
-
+      delete new_user.password
+      res.status(200).send({
+        data: new_user,
+        status_code: 200,
+      })
     })
     .catch((e) => {
       // 注册失败，异步删除上传的头像
-      fs.unlink(req.files.avatar.path)
+      // fs.unlink(req.files.avatar.path)
       // 用户名被占用则跳回注册页，而不是错误页
       if (e.message.match('duplicate key')) {
         // req.flash('error', '邮箱已注册')
@@ -86,7 +90,6 @@ router.post('/signup', checkStatus, function (req, res, next) {
       }
       next(e)
     })
-  res.send('注册')
 })
 
 module.exports = router
