@@ -10,8 +10,6 @@ const form = require('express-formidable')
 const winston = require('winston')
 const expressWinston = require('express-winston')
 
-// 路由  把路由文件封装成函数加载过来 路由函数接收app来进行处理，不直接在index写路由入口
-
 // 设置静态文件目录
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -47,7 +45,9 @@ app.use(expressWinston.logger({
     })
   ]
 }))
-// 路由
+
+// 路由  把路由文件封装成函数加载过来 路由函数接收app来进行处理，不直接在index写路由入口
+
 routes(app)
 // 错误请求的日志
 app.use(expressWinston.errorLogger({
