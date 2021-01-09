@@ -13,5 +13,24 @@ module.exports = {
       .findOne({email: email})
       .addCreatedAt() // 这里我们使用了 addCreatedAt 自定义插件（通过 _id 生成时间戳）
       .exec()
+  },
+
+  // 更新信息
+  updateInfo: function  updateUser(email, update_data) {
+    return User
+      .updateOne(
+        {
+          email: email
+        },
+        {
+          $set:
+            {
+              name: update_data.name,
+              password: update_data.password,
+              age: update_data.age
+            }
+        }
+      )
+      .exec()
   }
 }

@@ -26,14 +26,16 @@ router.post('/signin', function (req, res, next) {
       if(!user) {
         res.send({status: '401', msg:'邮箱不存在！'})
       }
-      if(sha1(password) !== user.password) {
+      else if(sha1(password) !== user.password) {
         res.send({status: '401', msg: '密码不正确'})
-        return
       }else{
         // 用户信息写入 session
-        delete user.password
-        req.session.user = user
-        res.send({status:200})
+        // delete user.password
+        // req.session.user = user
+
+        // 用户信息生成token,返回前端存起来
+        const token = new jwt(user).generateToken()
+        res.send({status:200, data:{token}})
       }
     })
     .catch(next)
@@ -42,11 +44,7 @@ router.post('/signin', function (req, res, next) {
 
 // POST /signout 用户录出
 router.post('/signout', function (req, res, next) {
-   // 清空 session 中用户信息
-   req.session.user = null
-
-   // 登出成功后跳转到主页
-   res.send({status: 200})
+    // 前端把Stroage里token清空就可以，不用掉接口；下次请求就没登录状态
 })
 
 
@@ -89,7 +87,7 @@ router.post('/signup', function (req, res, next) {
       // console.log(req.session)
 
       // 用注册信息生成token
-      let token = new jwt(new_user).generateToken(new_user)
+      let token = new jwt(new_user).generateToken()
       res.status(200).send({
         data: new_user,
         token,
@@ -114,8 +112,45 @@ router.post('/signup', function (req, res, next) {
  * 查看用户个人信息
  */
 
-router.get('/profile/:id', checkLoginStatus, function(req,res,next) {
+router.get('/profile', checkLoginStatus, function(req,res,next) {
+  let token = req.headers.token
+  let user_data = new jwt(token).verifyToken()
+  res.status(200).send({status_code:200, data: user_data})
+})
 
+
+
+/**
+ * 修改用户个人信息
+ */
+
+router.patch('/profile', checkLoginStatus, function(req,res,next) {
+  let age = parseInt(req.fields.age)
+  let password = req.fields.password
+  let new_password = req.fields.new_password
+  let name = req.fields.name
+  let email = req.fields.email
+
+  if (new_password !== null && password !== new_password) {
+    password = new_password
+  }
+  password = sha1(password)
+
+  let new_info = {
+    name,
+    password,
+    age
+  }
+  UserModel.updateInfo(email,new_info)
+    .then((result) => {
+      console.log(result)
+      if(result.modifiedCount === 1 && result.matchedCount === 1 ) {
+        res.status(200).send({status_code:200, data: new_info})
+      }
+      else if (result.modifiedCount === 0 && result.matchedCount === 1 ) {
+        res.status(200).send({status_code:200, msg:'没有信息更新'})
+      }
+    })
 })
 
 

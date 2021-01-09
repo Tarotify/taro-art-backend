@@ -90,7 +90,7 @@ db.users.updateOne(
     name: 'raymond'
   },
   {
-    {$set:{status: 'admin'}}
+    $set:{status: 'admin'}
   }
 )
 ```
