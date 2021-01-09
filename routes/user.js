@@ -5,7 +5,7 @@ const { now } = require('moment')
 const path = require('path')
 const sha1 = require('sha1')
 const moment = require('moment')
-const jwt = require('jsonwebtoken')
+const jwt = require('../utils')
 
 const UserModel = require('../models/users')
 const checkStatus = require('../middlewares/check').checkStatus
@@ -79,12 +79,16 @@ router.post('/signup', checkStatus, function (req, res, next) {
       // 此 new_user 是插入 mongodb 后的值，包含 _id
       let new_user = result.ops[0]
 
-      // 删除密码这种敏感信息，将用户信息存入 session
+      // 删除密码这种敏感信息，将用户信息存入 session （新方法，不存session 用token)
       delete new_user.password
-      req.session.user = new_user
-      console.log(req.session)
+      // req.session.user = new_user
+      // console.log(req.session)
+
+      // 用注册信息生成token
+      let token = new jwt(new_user).generateToken(new_user)
       res.status(200).send({
         data: new_user,
+        token,
         status_code: 200,
       })
     })
