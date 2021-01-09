@@ -10,11 +10,6 @@ const jwt = require('../utils/jwt')
 const UserModel = require('../models/users')
 const checkStatus = require('../middlewares/check').checkStatus
 const checkLoginStatus = require('../middlewares/check').checkLoginStatus
-// GET  登录页
-router.get('/test',  function (req, res, next) {
-  res.send('test')
-})
-
 
 // POST /signin 用户登录
 router.post('/signin', function (req, res, next) {

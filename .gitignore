@@ -4,3 +4,6 @@ config/*
 npm-debug.log
 node_modules
 coverage
+sendgrid.env
+notes
+utils/var
