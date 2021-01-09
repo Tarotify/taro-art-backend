@@ -4,7 +4,7 @@ const User = require('../lib/mongo').User
 module.exports = {
   // 注册
   create: function create (user) {
-    return User.create(user).exec()
+    return User.insertOne(user).exec()
   },
 
   // 登录 通过email获取用户信息

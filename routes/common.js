@@ -1,8 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const fs = require('fs')
+const { now } = require('moment')
 const path = require('path')
 const sha1 = require('sha1')
+const moment = require('moment')
 
 const UserModel = require('../models/users')
 const checkStatus = require('../middlewares/check').checkStatus
@@ -47,7 +49,7 @@ router.post('/signout', checkStatus, function (req, res, next) {
 })
 
 router.post('/signup', checkStatus, function (req, res, next) {
-  console.log('123')
+  console.log('signup')
   const email = req.fields.email
   const name = req.fields.name
   const age = req.fields.age
@@ -58,20 +60,23 @@ router.post('/signup', checkStatus, function (req, res, next) {
   // 明文密码加密
   // password = sha1(password) //sha1 并不是一种十分安全的加密方式，实际开发中可以使用更安全的 bcrypt 或 scrypt 加密。
 
-  // 待写入数据库的用户信息
+  // 待写入数据库的用户信息]
+  let now = moment().format('YYYY-MM-DD HH:mm:ss')
+
   let user = {
     name: name,
     password: password,
     email: email,
     age: parseInt(age),
     // avatar: avatar,
-    phone: phone
+    phone: phone,
+    create_date: now
   }
 
   UserModel.create(user)
     .then((result) => {
       // 此 user 是插入 mongodb 后的值，包含 _id
-      console.log(res.sessionID)
+      console.log(result)
       let new_user = result.ops[0]
       // 删除密码这种敏感信息，将用户信息存入 session
       delete new_user.password
@@ -86,7 +91,7 @@ router.post('/signup', checkStatus, function (req, res, next) {
       // 用户名被占用则跳回注册页，而不是错误页
       if (e.message.match('duplicate key')) {
         // req.flash('error', '邮箱已注册')
-        res.send({status: 502})
+        res.status(409).send({msg:'邮箱已注册'})
       }
       next(e)
     })
