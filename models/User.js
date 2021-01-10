@@ -32,5 +32,21 @@ module.exports = {
         }
       )
       .exec()
+  },
+  // 修改密码
+  changePassword: function changePassword(user, password) {
+    return User
+      .updateOne(
+        {
+          email: user
+        },
+        {
+          $set:
+            {
+              password,
+            }
+        }
+      )
+      .exec()
   }
 }

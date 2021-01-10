@@ -12,7 +12,6 @@ module.exports = function (app) {
     res.send('♥♥♥♥♥ What\'s up taro !!!!!')
   })
 
-
   /**改版写到中间件，middleware里统一验证 */
   // app.use((req,res,next)=>{
   //   // 如果是需要携带token才能访问的路径

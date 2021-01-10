@@ -10,6 +10,7 @@ const jwt = require('../utils/jwt')
 const UserModel = require('../models/User')
 const checkStatus = require('../middlewares/check').checkStatus
 const checkLoginStatus = require('../middlewares/check').checkLoginStatus
+const EmailFunction = require('../models/Sendgrip')
 
 // POST /signin 用户登录
 router.post('/signin', function (req, res, next) {
@@ -164,9 +165,52 @@ router.patch('/profile', checkLoginStatus, function(req,res,next) {
 })
 
 
+// 修改用户密码
 
+router.post('/password/pre_reset', function(req,res,next) {
+  const email = req.fields.email
+  // 检验email是否存中
+  UserModel.getUserByEmail(email)
+  .then((user) => {
+    if(!user) {
+      let param = Math.round(Math.random()*100000) // verification code
+      EmailFunction(email, 'Taro - Account Passwrod Reset Notification', 'password_reset', param)
+      // 写入session
+      req.session.verifyCode = param
+      res.status(200).send('已送发')
+    }else{
+      res.status(403).send({msg:'该邮箱未注册'})
+    }
+  })
+})
 
+router.post('/password/reset', function(req,res,next) {
+  const email = req.fields.email
+  const password = req.fields.password
+  const param = req.fields.param
 
+  // 再一次验证码
+  if( param !== req.session.verifyCode) {
+      res.status(401).send({status_code:401, msg:'修改失败,验证不通过'})
+  }
+  // 检验email是否存中
+  UserModel.getUserByEmail(email)
+  .then((user) => {
+    if(!user) {
+      UserModel.changePassword(user,password).then(result => {
+        if(result.modifiedCount === 1 && result.matchedCount === 1 ) {
+          res.status(200).send({status_code:200})
+        }
+        else{
+          res.status(400).send({status_code:400, msg:'修改失败'})
+        }
+      })
+    }
+    else{
+      res.status(401).send({status_code:401, msg:'用户未找到'})
+    }
+  })
+})
 
 
 

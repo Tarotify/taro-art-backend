@@ -5,10 +5,30 @@ cookie 存储在浏览器（有大小限制），session 存储在服务端（�
 session 更安全，cookie 可以直接在浏览器查看甚至编辑
 
 
-// req.session 初始值为 {}，当我们登录后设置 req.session.user = 用户信息，返回浏览器的头信息中会带上 set-cookie 将 session id 写到浏览器 cookie 中，那么该用户下次请求时，通过带上来的 cookie 中的 session id 我们就可以查找到该用户，并将用户信息保存到 req.session.user
-// express-session: 会话（session）支持中间件
-// connect-mongo: 将 session 存储于 mongodb，需结合 express-session 使用，我们也可以将 session 存储于 redis，如 connect-redis
+> req.session 初始值为 {}，当我们登录后设置 req.session.user = 用户信息，返回浏览器的头信息中会带上 set-cookie 将 session id 写到浏览器 cookie 中，那么该用户下次请求时，通过带上来的 cookie 中的 session id 我们就可以查找到该用户，并将用户信息保存到 req.session.user
+express-session: 会话（session）支持中间件
+connect-mongo: 将 session 存储于 mongodb，需结合 express-session 使用，我们也可以将 session 存储于 redis，如 connect-redis
 
+- 代码中 
+// 使用session 中间件
+```js
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
+const config = require('config-lite')(__dirname)
+
+app.use(session({
+  name: config.session.key, // 设置 cookie 中保存 session id 的字段名称
+  secret: config.session.secret, // 通过设置 secret 来计算 hash 值并放在 cookie 中，使产生的 signedCookie 防篡改
+  resave: true, // 强制更新 session
+  saveUninitialized: false, // 设置为 false，强制创建一个 session，即使用户未登录
+  cookie: {
+    maxAge: config.session.maxAge// 过期时间，过期后 cookie 中的 session id 自动删除
+  },
+  store: new MongoStore({// 将 session 存储到 mongodb
+    url: config.mongodb// mongodb 地址
+  })
+}))
+```
 
 
 
