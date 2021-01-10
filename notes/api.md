@@ -7,7 +7,9 @@
 
 2. 用户信息修改
   - 获取：GET api/user/profile
-  - 修改：PATCH api/user/profile
+  - 更新：PATCH api/user/profile
+  - 密码修改 ：1. 验证邮箱账号：POST api/user/password/pre_reset  
+              2. 修改密码 POST api/user/password/reset  
 
 3. 文章
   - 获取：GET api/common/posts
