@@ -7,7 +7,7 @@ const sha1 = require('sha1')
 const moment = require('moment')
 const jwt = require('../utils/jwt')
 
-const UserModel = require('../models/users')
+const UserModel = require('../models/User')
 const checkStatus = require('../middlewares/check').checkStatus
 const checkLoginStatus = require('../middlewares/check').checkLoginStatus
 

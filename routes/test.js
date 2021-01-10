@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const EmailFunction = require('../models/sendgrip')
+const EmailFunction = require('../models/Sendgrip')
 
 router.get('/mail', function (req, res) {
   // res.send('hello, ' + req.params.name)
