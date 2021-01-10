@@ -46,6 +46,23 @@ app.use(expressWinston.logger({
   ]
 }))
 
+// 允许跨域
+app.all('*', function(req, res, next) {
+  // console.log(req.headers.origin)
+  // console.log(req.environ)
+  // res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Origin", '*');
+  res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,PATCH,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Credentials","true");
+  res.header("X-Powered-By",' 3.2.1')
+  if(req.method === "OPTIONS") {
+    res.send(200);/*让options请求快速返回*/
+  }else {
+    next();
+  }
+});
+
 // 路由  把路由文件封装成函数加载过来 路由函数接收app来进行处理，不直接在index写路由入口
 
 routes(app)
