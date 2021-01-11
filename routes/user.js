@@ -172,7 +172,7 @@ router.post('/password/pre_reset', function(req,res,next) {
   // 检验email是否存中
   UserModel.getUserByEmail(email)
   .then((user) => {
-    if(!user) {
+    if(user) {
       let param = Math.round(Math.random()*100000) // verification code
       EmailFunction(email, 'Taro - Account Passwrod Reset Notification', 'password_reset', param)
       // 写入session
