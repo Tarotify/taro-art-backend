@@ -94,3 +94,73 @@ db.users.updateOne(
   }
 )
 ```
+
+### 表关联查找
+- 相关文档：https://www.cnblogs.com/duanxz/p/10838910.html
+
+> $lookup:
+db.product.insert({"_id":1,"productname":"商品1","price":15})
+db.product.insert({"_id":2,"productname":"商品2","price":36})
+
+
+db.orders.insert({"_id":1,"pid":1,"ordername":"订单1"})
+db.orders.insert({"_id":2,"pid":2,"ordername":"订单2"})
+db.orders.insert({"_id":3,"pid":2,"ordername":"订单3"})
+db.orders.insert({"_id":4,"pid":1,"ordername":"订单4"})
+
+db.product.find()
+db.orders.find()
+
+orders表里有product表的id
+
+- 语法：
+db.product.aggregate([
+      {
+        $lookup:
+          {
+           from: "orders",
+           localField: "_id",
+            foreignField: "pid",
+           as: "inventory_docs"
+          }
+    }
+ ])
+
+- 结果
+ 1 /* 1 */
+ 2 {
+ 3     "_id" : 1.0,
+ 4     "productname" : "商品1",
+ 5     "price" : 15.0,
+ 6     "inventory_docs" : [ 
+ 7         {
+ 8             "_id" : 1.0,
+ 9             "pid" : 1.0,
+10             "ordername" : "订单1"
+11         }, 
+12         {
+13             "_id" : 4.0,
+14             "pid" : 1.0,
+15             "ordername" : "订单4"
+16         }
+17     ]
+18 }
+19 
+20 /* 2 */
+21 {
+22     "_id" : 2.0,
+23     "productname" : "商品2",
+24     "price" : 36.0,
+25     "inventory_docs" : [ 
+26         {
+27             "_id" : 2.0,
+28             "pid" : 2.0,
+29             "ordername" : "订单2"
+30         }, 
+31         {
+32             "_id" : 3.0,
+33             "pid" : 2.0,
+34             "ordername" : "订单3"
+35         }
+36     ]
+37 }
