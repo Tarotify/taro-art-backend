@@ -3,8 +3,7 @@ const router = express.Router()
 const superagent = require('superagent')  //是个 http 方面的库，可以发起 get 或 post 请求。
 const cheerio = require('cheerio')  // 一个 Node.js 版的 jquery，用来从网页中以 css selector 取数据，使用方式跟 jquery 一样一样的。
 
-let crawl_items = []
-const duoNao = (res, page, size) => {
+const duoNao = (res, page, size, crawlResult) => {
   superagent.get(`https://duonaolive.com/list?type=1&page=${page}&class=1&area=&year=&lang=&order=&filter=True`)
   .end(function(err, result){
     // 2.错误处理判断
@@ -19,24 +18,25 @@ const duoNao = (res, page, size) => {
     let $ = cheerio.load(result.text)
     $('.video_poster .img img').each(function (index, element) {
       let $element = $(element);
-      crawl_items.push({
+      crawlResult.push({
         imgsrc: $element.attr('src'),
         name: $element.attr('alt')
       })
     })
     page++;
-    if (page < size) {
-      duoNao(res, page, size) //递归
+    if (page <= size) {
+      duoNao(res, page, size, crawlResult) //递归
     }else {
-      res.send(crawl_items)  // 返回结果
+      res.send(crawlResult)  // 返回结果
     }
   })
 }
 
-router.get('/', function(req,res,next){
+router.get('/duonao', function(req,res,next){
   let page = 1;
-  let size = 5;
-  duoNao(res, page, size)
+  let size = 2;
+  let duoNaoResult = []
+  duoNao(res, page, size, duoNaoResult)
 })
 
 module.exports = router
