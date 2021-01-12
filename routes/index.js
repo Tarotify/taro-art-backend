@@ -3,6 +3,7 @@ const router = express.Router()
 const commonRouter = require('./common')
 const userRouter = require('./user')
 const testRouter = require('./test')
+const crawlRouter = require('./crawl')
 
 
 
@@ -40,6 +41,7 @@ module.exports = function (app) {
   app.use('/api/common', commonRouter)
   app.use('/api/user', userRouter)
   app.use('/api/test', testRouter)
+  app.use('/api/crawl', crawlRouter)
   // app.use('/posts', require('./posts'))
   // app.use('/comments', require('./comments'))
 }

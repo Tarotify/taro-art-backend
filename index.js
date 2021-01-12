@@ -82,7 +82,7 @@ app.use(expressWinston.errorLogger({
 
 // 监听端口，启动程序
 if (module.parent) {
-  // 被 require，则导出 app 这样做可以实现：直接启动 index.js 则会监听端口启动程序，如果 index.js 被 require 了，则导出 app，通常用于测试。
+  // index.js 被 require，则导出 app 这样做可以实现：直接启动 index.js 则会监听端口启动程序，如果 index.js 被 require 了，则导出 app，通常用于测试。
   module.exports = app
 } else {
   // 监听端口，启动程序
