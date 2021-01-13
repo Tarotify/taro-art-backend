@@ -16,13 +16,28 @@ const duoNao = (res, page, size, crawlResult) => {
     // 剩下就都是 jquery的操作获取节点的值了
 
     let $ = cheerio.load(result.text)
+    let data1 = []
+    let data2 = []
+    let data_merge = []
     $('.video_poster .img img').each(function (index, element) {
       let $element = $(element);
-      crawlResult.push({
-        imgsrc: $element.attr('src'),
-        name: $element.attr('alt')
+      data1.push({
+        name: $element.attr('alt'),
+        imgsrc: $element.attr('src')
       })
     })
+
+    $('.title_box a').each(function (index, element){
+      let $element = $(element);
+      data2.push({
+        href: 'https://duonaolive.com/'+$element.attr('href')
+      })
+    })
+
+    data_merge = data1.map((item,index) => {
+      return {...item, ...data2[index]}
+    })
+    crawlResult = crawlResult.concat(data_merge)
     page++;
     if (page <= size) {
       duoNao(res, page, size, crawlResult) //递归
@@ -38,6 +53,30 @@ router.get('/duonao', function(req,res,next){
   let duoNaoResult = []
   duoNao(res, page, size, duoNaoResult)
 })
+
+const shan = (res, shanResult) => {
+  superagent.get(`https://fs2694.github.io/Portfolio2.0/`)
+  .end(function(err, result){
+    if(err){
+      next(err)
+    }
+    let $ = cheerio.load(result.text)
+    $('.col-md-4 img').each(function(index,element) {
+      let $element = $(element);
+      shanResult.push({
+        imgsrc: `https://fs2694.github.io/Portfolio2.0/`+ $element.attr('src'),
+        name: $element.attr('alt')
+      })
+    })
+    res.send(shanResult)
+  })
+}
+
+router.get('/shan',function(req,res,next){
+  let shanResult =[]
+  shan(res,shanResult)
+})
+
 
 module.exports = router
 
