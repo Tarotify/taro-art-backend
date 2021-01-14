@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')  //是个 http 方面的库，可以发起 get 或 post 请求。
 const cheerio = require('cheerio')  // 一个 Node.js 版的 jquery，用来从网页中以 css selector 取数据，使用方式跟 jquery 一样一样的。
+const fs = require("fs")
+const path = require('path');
 
 const duoNao = (res, page, size, crawlResult,className) => {
   superagent.get(`https://duonaolive.com/list?type=1&page=${page}&class=${className}&area=&year=&lang=&order=&filter=True`)
@@ -50,6 +52,23 @@ const duoNao = (res, page, size, crawlResult,className) => {
         'data': crawlResult,
         'totoal':total
       }
+      // console.log("准备写入文件");
+      //获得根目录
+      const appDir = path.dirname(require.main.filename);
+      fs.writeFile(appDir+"/crawl/crawl.json", JSON.stringify(result),  function(err) {
+        if (err) {
+          return console.error(err);
+        }
+        console.log("数据写入成功！");
+        // // console.log("--------我是分割线-------------")
+        // // console.log("读取写入的数据！");
+        // fs.readFile(__dirname + "/crawl/"+"crawl.json", function (err, data) {
+        //     if (err) {
+        //       return console.error(err);
+        //     }
+        //     console.log("异步读取文件数据: " + data.toString());
+        // });
+      });
       res.send(result)  // 返回结果
     }
   })
