@@ -3,8 +3,8 @@ const router = express.Router()
 const superagent = require('superagent')  //是个 http 方面的库，可以发起 get 或 post 请求。
 const cheerio = require('cheerio')  // 一个 Node.js 版的 jquery，用来从网页中以 css selector 取数据，使用方式跟 jquery 一样一样的。
 
-const duoNao = (res, page, size, crawlResult) => {
-  superagent.get(`https://duonaolive.com/list?type=1&page=${page}&class=1&area=&year=&lang=&order=&filter=True`)
+const duoNao = (res, page, size, crawlResult,className) => {
+  superagent.get(`https://duonaolive.com/list?type=1&page=${page}&class=${className}&area=&year=&lang=&order=&filter=True`)
   .end(function(err, result){
     // 2.错误处理判断
     if(err) {
@@ -18,7 +18,6 @@ const duoNao = (res, page, size, crawlResult) => {
     let $ = cheerio.load(result.text)
     let data1 = []
     let data2 = []
-    let data_merge = []
     $('.video_poster .img img').each(function (index, element) {
       let $element = $(element);
       data1.push({
@@ -34,25 +33,53 @@ const duoNao = (res, page, size, crawlResult) => {
       })
     })
 
-    data_merge = data1.map((item,index) => {
+    let data_merge = data1.map((item,index) => {
       return {...item, ...data2[index]}
     })
+    // 爬不到了
+    if(data_merge.length === 0){
+      res.send(crawlResult)
+    }
     crawlResult = crawlResult.concat(data_merge)
     page++;
     if (page <= size) {
       duoNao(res, page, size, crawlResult) //递归
     }else {
-      res.send(crawlResult)  // 返回结果
+      let total = crawlResult.length
+      let result = {
+        'data': crawlResult,
+        'totoal':total
+      }
+      res.send(result)  // 返回结果
     }
   })
 }
 
 router.get('/duonao', function(req,res,next){
   let page = 1;
-  let size = 2;
-  let duoNaoResult = []
-  duoNao(res, page, size, duoNaoResult)
+  let size = 1;
+  let actionMovieResult = []
+  // 中文字转换成utf-8
+  let className = encodeURI('动作片');
+  duoNao(res, page, size, actionMovieResult, className)
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const shan = (res, shanResult) => {
   superagent.get(`https://fs2694.github.io/Portfolio2.0/`)
