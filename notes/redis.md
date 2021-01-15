@@ -40,7 +40,7 @@ client.on("error", function(error) {
 
 
 //配置 session
-var identityKey = 'skey';
+var identityKey = 'rediskey';
 app.use(session({
     name: identityKey,
     secret: 'sessiontest',  // 用来对session id相关的cookie进行签名
@@ -98,3 +98,21 @@ req.session.reload(function(err) {
 
 更多链接：
 https://andrewpqc.github.io/2017/09/17/cookie-and-session-in-Express-use-redis-to-make-it-work-better/
+
+
+
+
+六、Redis 订阅发布
+发布
+```js
+client.publish('testPublish', 'message from publish.js');
+```
+订阅
+```js
+client.subscribe('testPublish'); 
+client.on('message', function(channel, msg){
+    console.log('client.on message, channel:', channel, ' message:', msg);
+});
+
+>>> 'client.on message, channel: testPublish', 'message': 'message from publish.js'
+```

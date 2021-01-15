@@ -9,6 +9,20 @@ const pkg = require('./package.json')
 const form = require('express-formidable')
 const winston = require('winston')
 const expressWinston = require('express-winston')
+// redis 模块
+const redis = require('redis');
+const client = redis.createClient('6379', '127.0.0.1');// 默认监听6379端口,'127.0.0.1'为你本地ip(默认不需要修改)
+// const RedisStore = require('connect-redis')(session);
+client.on('error', function (err) {
+  console.log('Error of redis - ' + err);
+});
+
+client.set('color', 'red', redis.print);
+client.get('color', function(err, value) {
+  if (err) throw err;
+  console.log('Got: ' + value)
+  client.quit();
+})
 
 // 设置静态文件目录
 app.use(express.static(path.join(__dirname, 'public')))
@@ -64,7 +78,6 @@ app.all('*', function(req, res, next) {
 });
 
 // 路由  把路由文件封装成函数加载过来 路由函数接收app来进行处理，不直接在index写路由入口
-
 routes(app)
 // 错误请求的日志
 app.use(expressWinston.errorLogger({
