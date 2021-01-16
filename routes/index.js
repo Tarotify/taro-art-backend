@@ -4,7 +4,7 @@ const commonRouter = require('./common')
 const userRouter = require('./user')
 const testRouter = require('./test')
 const crawlRouter = require('./crawl')
-
+const oauthRouter = require('./oauth')
 
 
 // 直接对外暴露一个方法
@@ -42,6 +42,8 @@ module.exports = function (app) {
   app.use('/api/user', userRouter)
   app.use('/api/test', testRouter)
   app.use('/api/crawl', crawlRouter)
+  app.use('/api/oauth', oauthRouter)
+
   // app.use('/posts', require('./posts'))
   // app.use('/comments', require('./comments'))
 }

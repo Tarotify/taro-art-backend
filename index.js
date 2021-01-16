@@ -17,6 +17,7 @@ client.on('error', function (err) {
   console.log('Error of redis - ' + err);
 });
 
+// redis-server.exe redis.windows.con 开启
 client.set('color', 'red', redis.print);
 client.get('color', function(err, value) {
   if (err) throw err;
