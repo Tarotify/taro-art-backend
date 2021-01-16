@@ -94,15 +94,20 @@ app.use(expressWinston.errorLogger({
 }))
 
 
+
 // 监听端口，启动程序
 if (module.parent) {
   // index.js 被 require，则导出 app 这样做可以实现：直接启动 index.js 则会监听端口启动程序，如果 index.js 被 require 了，则导出 app，通常用于测试。
   module.exports = app
 } else {
   // 监听端口，启动程序
-  app.listen(config.port, function () {
+  const server = app.listen(config.port, function () {
     console.log(`${pkg.name} listening on port ${config.port}`)
   })
+
+  // socketio配置
+  const io = require('socket.io')(server);
+  app.set('socketio', io);  // 在router中使用req.app.get('socketio')
 }
 
 

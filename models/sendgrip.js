@@ -1,6 +1,6 @@
 const sgMail = require('@sendgrid/mail')
 const API_KEY = require('../utils/var').SENDGRID_API_KEY
-const template = require('../template')
+const template = require('../email_template')
 
 module.exports = function (send_to, title, template_name, param) {
   let html = template[template_name](param)

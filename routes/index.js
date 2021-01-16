@@ -5,6 +5,7 @@ const userRouter = require('./user')
 const testRouter = require('./test')
 const crawlRouter = require('./crawl')
 const oauthRouter = require('./oauth')
+const socketRouter = require('./socketio')
 
 
 // 直接对外暴露一个方法
@@ -13,6 +14,7 @@ module.exports = function (app) {
     res.send('♥♥♥♥♥ What\'s up taro !!!!!')
   })
 
+  app.use('/chat', socketRouter)
   /**改版写到中间件，middleware里统一验证 */
   // app.use((req,res,next)=>{
   //   // 如果是需要携带token才能访问的路径
