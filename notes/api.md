@@ -22,5 +22,10 @@
   - 创建留言：POST  api/common/comments
 
 
+5. 使用爬虫
 
+6. 使用sendgrid发邮件
 
+7. 使用mongodb存放session
+
+8. 使用redis存放session

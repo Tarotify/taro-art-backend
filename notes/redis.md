@@ -21,6 +21,54 @@ https://github.com/MicrosoftArchive/redis/releases
 下载3.2.100版的zip解压到E盘的/redis文件下  
 打开cmd到目录下运行 redis-server.exe redis.window.conf 开启
 
+- 普通数据
+```js
+var redis = require('redis')
+
+var client = redis.createClient(6379, '127.0.0.1')
+client.on('error', function (err) {
+  console.log('Error ' + err);
+});
+
+// 1 键值对
+client.set('color', 'red', redis.print); //  Reply: OK
+client.get('color', function(err, value) {
+  if (err) throw err;
+  console.log('Got: ' + value)
+  client.quit();
+})
+
+>>> Reply: OK
+>>> Got: red
+```
+
+- 哈希表
+```js
+client.hmset('kitty', {
+  'age': '2-year-old',
+  'sex': 'male'
+}, redis.print); 
+client.hget('kitty', 'age', function(err, value) {
+  if (err) throw err;
+  console.log('kitty is ' + value);
+});
+
+client.hkeys('kitty', function(err, keys) {
+  if (err) throw err;
+  keys.forEach(function(key, i) {
+    console.log(key, i);
+  });
+  client.quit();
+});
+
+>>> Reply: OK
+>>> 'kitty is 2-year-old'
+
+>>> age 0
+>>> age 1
+```
+
+- 存放session
 
 引入配置
 // express 模块
