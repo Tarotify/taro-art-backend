@@ -11,10 +11,16 @@ session运行在服务器端，当客户端第一次访问服务器时，可以�
 安装session模块和Redis模块
 在node(express)中使用session需要先安装cookie-parser和express-session模块。 为了持久化保存session我们使用Redis,需要安装redis和connect-redis模块。
 
-模块安装方法
+### 模块安装方法
 ```
 npm install cookie-parser express-session redis connect-redis --save
 ```
+
+### Window 安装 
+https://github.com/MicrosoftArchive/redis/releases
+下载3.2.100版的zip解压到E盘的/redis文件下  
+打开cmd到目录下运行 redis-server.exe redis.window.conf 开启
+
 
 引入配置
 // express 模块
