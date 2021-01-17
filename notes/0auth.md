@@ -118,7 +118,7 @@ const oauthLogin = async (userData = {}) => {
 
 
 
-### Google
+## Google
 
 1. enable the Analytics API  
 2. Go to the Credentials page. https://console.developers.google.com/apis/credentials/oauthclient/  
@@ -147,5 +147,86 @@ function onSignIn(googleUser) {
   console.log('Image URL: ' + profile.getImageUrl());
   console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 }
+```
+
+### Client Methods for js
+1. Load the Google APIs platform library to create the gapi object:
+```html
+<script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+```
+
+2. load the auth2 library:
+```js
+function initgoogleAuth(callback) {
+  if( typeof window.gapi === 'undefined') return
+  const GApi = window.gapi
+
+  
+  GApi.load('auth2', function() {
+    /* Ready. Make a call to gapi.auth2.init or some other API */
+
+    // Initializes the GoogleAuth object. 
+    const res = GApi.auth2.init({
+       client_id: 'CLIENT_ID.apps.googleusercontent.com'
+    })
+
+    window.GoogleAuth = res
+    callback.call(this,res) // 把gooleAuth传进function
+  });
+}
+```
+
+3. use in the login page
+```js
+import {Tools} from './utils/tools'
+
+const [initGoogle, setInitGoole] = useState(false)
+let guid = ''
+useEffect(() => {
+  const showGoogleAuth = (GoogleAuth) => {
+    if (typeof GoogleAuth === 'undefined') return
+    //GoogleAuth.attachClickHandler(container, options, onsuccess, onfailure)
+     GoogleAuth.attachClickHandler(document.getElementById('signin-google'), {}, function(googleUser) {
+       // 前端自己的回调函数，拿到授权后的googleuser信息向后端发送信息
+       handleGoogleCallback(googleUser.getAuthResponse().id_token)
+     }, function(err) {
+        console.log('网络错误')
+     }
+     )
+  }
+
+  if (typeof window.GoogleAuth === 'undefined') {
+    Tools.initgoogleAuth((GoogleAuth) => {
+      showGoogleAuht(GoogleAuth)
+      setInitGoole(true)
+    })
+  }else {
+    showGoogleAuht(GoogleAuth)
+  }
+},[])
+
+const handleGoogleCallback = token => {
+  dispatch({
+    type:'user/loginGoogle',
+    payload: {
+      request_id: googleUserId,
+      token: token,
+    }
+  }).then(res => {
+    console.log(res)
+  })
+}
+
+const onGooleClick = (e) => {
+  if(initGoogle === false) {
+    console.log('google登录初始化失败')
+    return
+  }
+  g
+}
+
+return (
+  <div id="signin-google" onClick={e => onGooleClick(e)}>Google 登录</div>
+)
 ```
 
