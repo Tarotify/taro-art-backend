@@ -118,8 +118,9 @@ const oauthLogin = async (userData = {}) => {
 
 
 
-## Google
+## Google Oauth2
 
+### quickStart
 1. enable the Analytics API  
 2. Go to the Credentials page. https://console.developers.google.com/apis/credentials/oauthclient/  
 3. Click Create credentials > OAuth client ID.  
@@ -206,6 +207,7 @@ useEffect(() => {
 },[])
 
 const handleGoogleCallback = token => {
+  // 调后端接口，把token传给后端，后端再用token来向google验证
   dispatch({
     type:'user/loginGoogle',
     payload: {
@@ -230,3 +232,4 @@ return (
 )
 ```
 
+https://developers.google.com/identity/sign-in/web/reference
