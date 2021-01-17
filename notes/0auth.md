@@ -114,3 +114,38 @@ const oauthLogin = async (userData = {}) => {
   }
 }
 ```
+
+
+
+
+### Google
+
+1. enable the Analytics API  
+2. Go to the Credentials page. https://console.developers.google.com/apis/credentials/oauthclient/  
+3. Click Create credentials > OAuth client ID.  
+4. Select the Web application application type.
+5. Name your OAuth 2.0 client and click Create
+
+6. Load the Google Platform Library
+```js
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+```  
+7. Specify your app's client ID
+```js
+<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+```
+8. Add a Google Sign-In button
+```html
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+```
+9. Get profile information
+```js
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+}
+```
+
