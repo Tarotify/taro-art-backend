@@ -211,7 +211,6 @@ const handleGoogleCallback = token => {
   dispatch({
     type:'user/loginGoogle',
     payload: {
-      request_id: googleUserId,
       token: token,
     }
   }).then(res => {
@@ -224,7 +223,7 @@ const onGooleClick = (e) => {
     console.log('google登录初始化失败')
     return
   }
-  g
+
 }
 
 return (
@@ -235,7 +234,9 @@ return (
 https://developers.google.com/identity/sign-in/web/reference
 
 
-- 后端 
+- 后端  
+> https://medium.com/wenchin-rolls-around/google-%E5%B8%B3%E8%99%9F%E7%99%BB%E5%85%A5-node-js-%E5%BE%8C%E7%AB%AF%E5%AF%A6%E4%BD%9C-45d9b24d283c
+
 google api  
  `https://oauth2.googleapis.com/tokeninfo?id_token=${accessToken}`,
 来获取用户信息  
