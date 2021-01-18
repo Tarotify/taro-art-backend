@@ -233,3 +233,85 @@ return (
 ```
 
 https://developers.google.com/identity/sign-in/web/reference
+
+
+- 后端 
+google api  
+ `https://oauth2.googleapis.com/tokeninfo?id_token=${accessToken}`,
+来获取用户信息  
+要安裝 request 網路連線套件 (Node.js 中類似 curl 的功能，用來模擬 HTTP 的動作打請求)：
+$ npm i express request
+```js
+const express = require("express");
+const bodyparser = require("body-parser");
+const request = require("request");
+
+let getGooleProfile = function(id_token)) {
+  return new Promise((resolve, reject) => {
+    if(!token) {
+      resolve(null)
+      return
+    };
+    request( `https://oauth2.googleapis.com/tokeninfo?id_token=${id_token}`,function(err,res,body) {
+      if(err) {
+        console.log(err)
+      }
+      body = JSON.parse(body)
+      if(body.error) {
+        reject(body.error)
+      }else{
+        resolve(body)
+      }
+    })
+  })
+}
+
+// 路由
+router.post('/user/singin', function(req,res,next) {
+  let id_token = req.fields.id_token
+  if (!id_token){
+    res.status(400).send({error:"Request Error: Google access token is required."})
+    return
+  }
+  getGooleProfile(id_token).then((profile) => {
+    if(!profile.name || !profile.mail) {
+      res.status(400).send({
+        {error:"Permissions Error: name, email are required."
+      })
+      return
+    }
+    res.status(200).send({
+      name: profile.name,
+      email: profile.email.
+      verify: profile.email_verified
+      avatar: profile.pictrue
+    })
+  }) .catch(function(error) {
+      res.status(500).send({ error: error });
+  });
+})
+
+// {
+//  // These six fields are included in all Google ID Tokens.
+//  "iss": "https://accounts.google.com",
+//  "sub": "110169484474386276334",
+//  "azp": "1008719970978-hb24n2dstb40o45d4feuo2ukqmcc6381.apps.googleusercontent.com",
+//  "aud": "1008719970978-hb24n2dstb40o45d4feuo2ukqmcc6381.apps.googleusercontent.com",
+//  "iat": "1433978353",
+//  "exp": "1433981953",
+
+//  // These seven fields are only included when the user has granted the "profile" and
+//  // "email" OAuth scopes to the application.
+//  "email": "testuser@gmail.com",
+//  "email_verified": "true",
+//  "name" : "Test User",
+//  "picture": "https://lh4.googleusercontent.com/-kYgzyAWpZzJ/ABCDEFGHI/AAAJKLMNOP/tIXL9Ir44LE/s99-c/photo.jpg",
+//  "given_name": "Test",
+//  "family_name": "User",
+//  "locale": "en"
+// }
+```
+
+
+
+google-auth-library-nodejs  https://github.com/googleapis/google-auth-library-nodejs  
