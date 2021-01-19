@@ -3,6 +3,8 @@
 
 ## 例子1：
 
+- GITHUB: https://docs.github.com/en/developers/apps/authorizing-oauth-apps 
+
 前端新开一个小窗口，width height可设定
 前端向后台请求，并带上当前地址(方便后续跳转回来)。后台返回认证地址及参数，使用window.location.href进行跳转。
 ```js
@@ -60,13 +62,13 @@ router.get('/github/callback',async (ctx)=>{
 ```
 
 
+
 ## 例子2
 
 2.1 前端实现
 前端采用了掘金的授权登录方式，当用户点击第三方GitHub登录，弹出一个新窗口
 
 `window.open("/oauth", "", "height=600, width=700")`
-
 在这个新窗口里只需要跳转链接，client_id，redirect_uri 就是之前创建的参数配置自己的就行。
 
 `window.location.href = 'github.com/login/oauth…'`
