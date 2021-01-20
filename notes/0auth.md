@@ -5,7 +5,7 @@
 
 - GITHUB: https://docs.github.com/en/developers/apps/authorizing-oauth-apps 
 
-前端新开一个小窗口，width height可设定
+前端新开一个小窗口，width height可设定访问授权网址
 前端向后台请求，并带上当前地址(方便后续跳转回来)。后台返回认证地址及参数，使用window.location.href进行跳转。
 ```js
   login(){
