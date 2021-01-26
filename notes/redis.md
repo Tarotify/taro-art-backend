@@ -19,7 +19,7 @@ npm install cookie-parser express-session redis connect-redis --save
 ### Window 安装 
 https://github.com/MicrosoftArchive/redis/releases
 下载3.2.100版的zip解压到E盘的/redis文件下  
-打开cmd到目录下运行 redis-server.exe redis.window.conf 开启
+打开cmd到目录下运行 redis-server.exe redis.windows.conf 开启
 
 - 普通数据
 ```js

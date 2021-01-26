@@ -8,7 +8,10 @@ router.get('/:id', function (req, res) {
 })
 // GET  登录页
 router.get('/test',  function (req, res, next) {
-  res.send('test')
+  const a = {
+    'abc': 1
+  }
+  res.status(200).send({data:a, status_code:200})
 })
 
 router.post('/', function(req,res,next) {

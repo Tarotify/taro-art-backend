@@ -15,6 +15,14 @@ module.exports = {
       .exec()
   },
 
+   // 登录 通过email获取用户信息
+  getUserByGithubId: function getUserByGithubId(github_id) {
+    return User
+      .findOne({github_id: github_id})
+      .addCreatedAt() // 这里我们使用了 addCreatedAt 自定义插件（通过 _id 生成时间戳）
+      .exec()
+  },
+
   // 更新信息
   updateInfo: function updateUser(user, update_data) {
     return User
