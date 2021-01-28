@@ -31,7 +31,7 @@ router.post('/signin', function (req, res, next) {
 
         // 用户信息生成token,返回前端存起来
         const token = new jwt(user).generateToken()
-        res.send({status:200, data:{token}})
+        res.status(200).send({status_code:200, data:{token}})
       }
     })
     .catch(next)
@@ -102,6 +102,15 @@ router.post('/signup', function (req, res, next) {
     })
 })
 
+/**
+ * 验证用户登录状态 前端cookie是否有token
+ */
+
+router.post('/session', function(req,res,next) {
+  let token = req.fields.token
+  let user_data = new jwt(token).verifyToken()
+  res.status(200).send({status_code:200, data: user_data})
+})
 
 
 /**
@@ -213,6 +222,61 @@ router.post('/password/reset', function(req,res,next) {
 })
 
 
+/**
+ * github用户绑定注册
+ */
+router.post('/signup/bind', function (req, res, next) {
+  const email = req.fields.email
+  const name = req.fields.name
+  let password = req.fields.password
+  const avatar = req.fields.avatar
+  const github_id = req.fields.github_id
+
+  if (req.fields.user_verify === 0 || req.fields.user_verify === 00) {
+    // // 明文密码加密
+    password = sha1(password) //sha1 并不是一种十分安全的加密方式，实际开发中可以使用更安全的 bcrypt 或 scrypt 加密。
+
+    // // 待写入数据库的用户信息]
+    let now = moment().format('YYYY-MM-DD HH:mm:ss')
+    let user = {
+      name: name,
+      password: password,
+      email: email,
+      avatar: avatar,
+      github_id: github_id,
+      create_date: now
+    }
+
+    UserModel.create(user)
+    .then((result) => {
+      // 此 new_user 是插入 mongodb 后的值，包含 _id
+      let new_user = result.ops[0]
+
+      // 删除密码这种敏感信息，将用户信息存入 session （新方法，不存session 用token)
+      delete new_user.password
+      // req.session.user = new_user
+      // console.log(req.session)
+
+      // 用注册信息生成token
+      let token = new jwt(new_user).generateToken()
+      res.status(200).send({
+        data: new_user,
+        token,
+        status_code: 200,
+      })
+    })
+    .catch((e) => {
+      // 注册失败，异步删除上传的头像
+      // fs.unlink(req.files.avatar.path)
+      // 邮箱被占用则跳回注册页，而不是错误页
+      if (e.message.match('duplicate key')) {
+        // req.flash('error', '邮箱已注册')
+        res.status(409).send({msg:'邮箱已注册, 请直接使用邮箱登录'})
+      }
+      next(e)
+    })
+  }
+})
 
 
 

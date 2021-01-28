@@ -5,6 +5,14 @@ const globalVar = require('../utils/var')
 const jwt = require('../utils/jwt')
 const User = require('../models/User')
 
+
+/**
+ * @param user_verify  99 => user
+ *                     0 =>  github_id
+ *                     00 => github_id and email
+ */
+
+
 router.post('/github/codeAuth', async function(req, res, next){
   const requestToken = req.fields.code
   console.log(requestToken)
@@ -45,11 +53,12 @@ router.post('/github/codeAuth', async function(req, res, next){
   if(email === null) {
     User.getUserByGithubId(github_id).then((user) => {
       if(!user) {
+        console.log(user)
         res.status(200).send({status_code:200, data:{user_verify: 0, name, avatar, github_id }})
     }else{
       // 用户信息生成token,返回前端存起来
       const token = new jwt(user).generateToken()
-      res.status(200).send({status_code:200, data:{user_verify: 1, token}})
+      res.status(200).send({status_code:200, data:{user_verify: 99, token}})
       }
     })
   }
@@ -61,7 +70,7 @@ router.post('/github/codeAuth', async function(req, res, next){
     }else{
       // 用户信息生成token,返回前端存起来
       const token = new jwt(user).generateToken()
-      res.status(200).send({status_code:200, data:{user_verify: 1, token}})
+      res.status(200).send({status_code:200, data:{user_verify: 99, token}})
       }
     })
   }
