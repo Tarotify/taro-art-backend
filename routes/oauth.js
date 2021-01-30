@@ -66,7 +66,7 @@ router.post('/github/codeAuth', async function(req, res, next){
   if (email !== null ) {
     User.getUserByEmail(email).then((user) => {
       if(!user) {
-        res.status(200).send({status_code:200, data:{user_verify: 00, name, avatar, email, github_id }})
+        res.status(200).send({status_code:200, data:{user_verify: 0, name, avatar, email, github_id }})
     }else{
       // 用户信息生成token,返回前端存起来
       const token = new jwt(user).generateToken()

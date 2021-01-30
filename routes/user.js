@@ -174,7 +174,7 @@ router.patch('/profile', checkLoginStatus, function(req,res,next) {
 })
 
 
-// 修改用户密码
+// 修改用户密码获取验证码
 
 router.post('/password/pre_reset', function(req,res,next) {
   const email = req.fields.email
@@ -185,38 +185,42 @@ router.post('/password/pre_reset', function(req,res,next) {
       let param = Math.round(Math.random()*100000) // verification code
       EmailFunction(email, 'Taro - Account Passwrod Reset Notification', 'password_reset', param)
       // 写入session
+      // 前端会有个set-cookies, 把verifycode存进cookie,在下一步改密验证里的接口前端就会直接带上cookie里的verifyCode请求
       req.session.verifyCode = param
-      res.status(200).send('已送发')
+      res.status(200).send({status_code: 200, msg:'已发送'})
     }else{
-      res.status(403).send({msg:'该邮箱未注册'})
+      res.status(200).send({status_code: 401, msg:'该邮箱未注册'})
     }
   })
 })
 
+// 修改用户密码
 router.post('/password/reset', function(req,res,next) {
   const email = req.fields.email
-  const password = req.fields.password
-  const param = req.fields.param
-
+  let password = req.fields.password
+  const code = req.fields.code
+  const email_code = req.session.verifyCode
   // 再一次验证码
-  if( param !== req.session.verifyCode) {
-      res.status(401).send({status_code:401, msg:'修改失败,验证不通过'})
+  if(parseInt(code) !== email_code) {
+    res.status(200).send({status_code:401, msg:'修改失败,验证不通过'})
   }
   // 检验email是否存中
   UserModel.getUserByEmail(email)
   .then((user) => {
-    if(!user) {
-      UserModel.changePassword(user,password).then(result => {
+    if(user) {
+      //转换密码
+      password = sha1(password)
+      UserModel.changePassword(user.email,password).then(result => {
         if(result.modifiedCount === 1 && result.matchedCount === 1 ) {
           res.status(200).send({status_code:200})
         }
         else{
-          res.status(400).send({status_code:400, msg:'修改失败'})
+          res.status(200).send({status_code:400, msg:'修改失败'})
         }
       })
     }
     else{
-      res.status(401).send({status_code:401, msg:'用户未找到'})
+      res.status(200).send({status_code:403, msg:'用户未找到'})
     }
   })
 })
