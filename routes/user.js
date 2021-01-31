@@ -94,7 +94,7 @@ router.post('/signup', function (req, res, next) {
     password: password,
     email: email,
     age: parseInt(age),
-    avatar: '',
+    avatar: 'https://github.com/Tarotify/taro-art-frontend/blob/master/src/asset/img/default_avatar.png?raw=true',
     phone: phone,
     create_date: now
   }
