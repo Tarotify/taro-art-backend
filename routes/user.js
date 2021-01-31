@@ -20,10 +20,10 @@ router.post('/signin', function (req, res, next) {
   UserModel.getUserByEmail(email)
     .then((user) => {
       if(!user) {
-        res.send({status: '401', msg:'邮箱不存在！'})
+        res.status(200).send({status_code: 400, msg:'邮箱不存在！'})
       }
       else if(sha1(password) !== user.password) {
-        res.send({status: '401', msg: '密码不正确'})
+        res.send({status_code: 401, msg: '密码不正确'})
       }else{
         // 用户信息写入 session
         // delete user.password
@@ -37,15 +37,37 @@ router.post('/signin', function (req, res, next) {
     .catch(next)
 })
 
-
-// POST /signout 用户录出
+/**
+* POST /signout 用户录出
+*/
 router.post('/signout', function (req, res, next) {
     // 前端把Stroage里token清空就可以，不用掉接口；下次请求就没登录状态
 })
 
 
 /**
- * 用户注册
+ *  用户注册, 邮箱验证 Step one
+ */
+router.post('/signup/check', function(req,res,next) {
+  const email = req.fields.email
+  // 检验email是否已被注册
+  UserModel.getUserByEmail(email)
+  .then((user) => {
+    if(!user) {
+      let param = Math.round(Math.random()*100000) // verification code
+      EmailFunction(email, 'Taro - Account Passwrod Reset Notification', 'password_reset', param)
+      // 写入session
+      // 前端会有个set-cookies, 把verifycode存进cookie,在下一步改密验证里的接口前端就会直接带上cookie里的verifyCode请求
+      req.session.verifyCode = param
+      res.status(200).send({status_code: 200, msg:'已发送'})
+    }else{
+      res.status(200).send({status_code: 400, msg:'该邮箱已注册'})
+    }
+  })
+})
+
+/**
+ * 用户注册 Step two
  */
 router.post('/signup', function (req, res, next) {
   console.log('signup')
@@ -55,7 +77,12 @@ router.post('/signup', function (req, res, next) {
   const phone = req.fields.phone
   // const avatar = req.files.avatar.path.split(path.sep).pop()
   let password = req.fields.password
-
+  const code = req.fields.code
+  const email_code = req.session.verifyCode
+  // 再一次验证码
+  if(parseInt(code) !== email_code) {
+    res.status(200).send({status_code:401, msg:'注册失败,验证码错误'})
+  }
   // 明文密码加密
   password = sha1(password) //sha1 并不是一种十分安全的加密方式，实际开发中可以使用更安全的 bcrypt 或 scrypt 加密。
 
@@ -96,11 +123,14 @@ router.post('/signup', function (req, res, next) {
       // 邮箱被占用则跳回注册页，而不是错误页
       if (e.message.match('duplicate key')) {
         // req.flash('error', '邮箱已注册')
-        res.status(409).send({msg:'邮箱已注册'})
+        res.status(200).send({status_code: 400, msg:'该邮箱已注册'})
+      }else{
+        res.status(200).send({status_code: 500, msg:'注册错误，请联系Taro'})
       }
       next(e)
     })
 })
+
 
 /**
  * 验证用户登录状态 前端cookie是否有token
@@ -174,8 +204,9 @@ router.patch('/profile', checkLoginStatus, function(req,res,next) {
 })
 
 
-// 修改用户密码获取验证码
-
+/**
+ *  用户密码修改, 邮箱验证 Step one
+ */
 router.post('/password/pre_reset', function(req,res,next) {
   const email = req.fields.email
   // 检验email是否存中
@@ -194,7 +225,9 @@ router.post('/password/pre_reset', function(req,res,next) {
   })
 })
 
-// 修改用户密码
+/**
+ *  用户密码修改, 邮箱验证 Step two
+ */
 router.post('/password/reset', function(req,res,next) {
   const email = req.fields.email
   let password = req.fields.password
