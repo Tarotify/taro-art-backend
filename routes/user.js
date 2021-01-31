@@ -94,7 +94,7 @@ router.post('/signup', function (req, res, next) {
     password: password,
     email: email,
     age: parseInt(age),
-    // avatar: avatar,
+    avatar: '',
     phone: phone,
     create_date: now
   }
