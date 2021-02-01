@@ -153,12 +153,12 @@ function onSignIn(googleUser) {
 ```
 
 ### Client Methods for js
-1. Load the Google APIs platform library to create the gapi object:
+Step1. Load the Google APIs platform library to create the gapi object:
 ```html
 <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
 ```
 
-2. load the auth2 library:
+Step2. load the auth2 library:
 ```js
 function initgoogleAuth(callback) {
   if( typeof window.gapi === 'undefined') return
@@ -179,7 +179,7 @@ function initgoogleAuth(callback) {
 }
 ```
 
-3. use in the login page
+Step3. use in the login page
 ```js
 import {Tools} from './utils/tools'
 
@@ -293,6 +293,10 @@ router.post('/user/singin', function(req,res,next) {
       res.status(500).send({ error: error });
   });
 })
+```
+- `data.email_verified`决定这个邮箱是否通过验证
+```JS
+//返回的用户数据部分
 
 // {
 //  // These six fields are included in all Google ID Tokens.
@@ -315,6 +319,8 @@ router.post('/user/singin', function(req,res,next) {
 // }
 ```
 
+简单直接API
+https://developers.google.com/identity/sign-in/web/backend-auth
 
-
+使用库
 google-auth-library-nodejs  https://github.com/googleapis/google-auth-library-nodejs  
