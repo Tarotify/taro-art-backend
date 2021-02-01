@@ -6,6 +6,7 @@ const jwt = require('../utils/jwt')
 const User = require('../models/User')
 const sha1 = require('sha1')
 const moment = require('moment')
+const UserModel = require('../models/User')
 
 /**
  * @param user_verify  99 => user
