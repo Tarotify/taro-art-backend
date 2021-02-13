@@ -23,7 +23,7 @@ module.exports = {
   checkLoginStatus: function checkLoginStatus (req,res,next) {
     console.log('验证token')
     // 获取请求头中的token
-    let token = req.headers.token
+    let token = req.headers.authorization
     // 验证【解析】token
     let result = new jwt(token).verifyToken()
     // 验证结果处理

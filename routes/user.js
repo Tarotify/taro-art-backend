@@ -148,7 +148,7 @@ router.post('/session', function(req,res,next) {
  */
 
 router.get('/profile', checkLoginStatus, function(req,res,next) {
-  let token = req.headers.token
+  let token = req.headers.authorization
   let user_data = new jwt(token).verifyToken()
   res.status(200).send({status_code:200, data: user_data})
 })
