@@ -24,13 +24,14 @@ module.exports = {
     console.log('验证token')
     // 获取请求头中的token
     let token = req.headers.authorization
+    console.log(token)
     // 验证【解析】token
     let result = new jwt(token).verifyToken()
     // 验证结果处理
     if (result.name === 'TokenExpiredError') {// 如果返回结果的name属性是TokenExpiredError，则说明token已超时
-        res.send({"code":403,"msg":"token超时"})
+        res.send({"status_code":401,"msg":"token超时"})
     } else if (result.name === 'JsonWebTokenError') { // 如果返回结果是JsonWebTokenError，则说明token不对
-        res.send({"code":403,"msg":"token错误"})
+        res.send({"status_code":401,"msg":"token错误"})
     } else { // 如果正确解析了数据对象，将数据对象赋值给data，继续执行
         console.log('验证token通过')
         next()
