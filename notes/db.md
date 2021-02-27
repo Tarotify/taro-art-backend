@@ -164,3 +164,42 @@ db.product.aggregate([
 35         }
 36     ]
 37 }
+
+
+
+# 使用 brew 安装
+此外你还可以使用 OSX 的 brew 来安装 mongodb：
+
+brew tap mongodb/brew
+brew install mongodb-community@4.4
+@ 符号后面的 4.4 是最新版本号。
+
+安装信息：
+
+配置文件：/usr/local/etc/mongod.conf
+日志文件路径：/usr/local/var/log/mongodb
+数据存放路径：/usr/local/var/mongodb
+运行 MongoDB
+我们可以使用 brew 命令或 mongod 命令来启动服务。
+
+brew 启动：
+
+brew services start mongodb-community@4.4
+or
+brew services start mongodb/brew/mongodb-community
+brew 停止：
+
+brew services stop mongodb-community@4.4
+or
+brew services stop mongodb/brew/mongodb-community
+
+mongod 命令后台进程方式：(手动)
+mongod --config /usr/local/etc/mongod.conf --fork
+
+
+mongod --config /usr/local/etc/mongod.conf --fork这种方式启动要关闭可以进入 mongo shell 控制台来实现：
+> db.adminCommand({ "shutdown" : 1 })
+
+
+# 下载mongodb compass GUI
+官网下载

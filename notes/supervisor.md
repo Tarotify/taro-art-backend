@@ -16,3 +16,15 @@
 3. 输入`set-ExecutionPolicy RemoteSigned`
 4. 输入`Y`
 5. 解决
+
+
+# Mac版本安装supervisor
+1. 安装 `sudo npm install supervisor -g`
+2. 测试是否能运行 `supervisor index.js`
+3. 若是安装成功了报这个问题的话，请注意看下是否装在 /usr/local/bin/ 目录下；如果不是说明安装目录不对，Mac默认访问执行文件的目录在 /usr/local/bin/，所以需要保证我们的执行模块安装在该目录下。
+`npm config get prefix                   // 获取npm全局安装目录`
+`npm config set prefix /usr/local        // 修改安装目录为Mac可执行文件目录；注意这里不需要加上/bin`
+
+# HomeBrew 直接安装superviosr进程管理
+https://soulteary.com/2019/03/11/mac-osx-starts-up-applications-supervisor.html
+https://blog.csdn.net/github_39437588/article/details/99716432
