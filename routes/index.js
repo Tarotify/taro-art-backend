@@ -11,7 +11,7 @@ const socketRouter = require('./socketio')
 // 直接对外暴露一个方法
 module.exports = function (app) {
   app.get('/', function (req, res) {
-    res.send('♥♥♥♥♥ What\'s up taro !!!!!')
+    res.send('♥♥♥♥♥ What\'s up taro !!!!! Welcome')
   })
 
   app.use('/chat', socketRouter)
