@@ -235,7 +235,7 @@ router.post('/password/reset', function(req,res,next) {
   const email_code = req.session.verifyCode
   // 再一次验证码
   if(parseInt(code) !== email_code) {
-    res.status(200).send({status_code:401, msg:'修改失败,验证不通过'})
+    res.status(200).send({status_code:401, msg:'修改失败,验证不通过', code:email_code})
   }
   // 检验email是否存中
   UserModel.getUserByEmail(email)
