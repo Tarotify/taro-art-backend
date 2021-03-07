@@ -81,7 +81,7 @@ router.post('/signup', function (req, res, next) {
   const email_code = req.session.verifyCode
   // 再一次验证码
   if(parseInt(code) !== email_code) {
-    res.status(200).send({status_code:401, msg:'注册失败,验证码错误'})
+    res.status(200).send({status_code:401, msg:'注册失败,验证码错误', code:email_code})
   }
   // 明文密码加密
   password = sha1(password) //sha1 并不是一种十分安全的加密方式，实际开发中可以使用更安全的 bcrypt 或 scrypt 加密。
