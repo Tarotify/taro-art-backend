@@ -236,26 +236,28 @@ router.post('/password/reset', function(req,res,next) {
   // 再一次验证码
   if(parseInt(code) !== email_code) {
     res.status(200).send({status_code:401, msg:'修改失败,验证不通过', a:123, code:email_code})
+    return null
+  }else {
+     // 检验email是否存中
+    UserModel.getUserByEmail(email)
+    .then((user) => {
+      if(user) {
+        //转换密码
+        password = sha1(password)
+        UserModel.changePassword(user.email,password).then(result => {
+          if(result.modifiedCount === 1 && result.matchedCount === 1 ) {
+            res.status(200).send({status_code:200})
+          }
+          else{
+            res.status(200).send({status_code:400, msg:'修改失败'})
+          }
+        })
+      }
+      else{
+        res.status(200).send({status_code:403, msg:'用户未找到'})
+      }
+    })
   }
-  // 检验email是否存中
-  UserModel.getUserByEmail(email)
-  .then((user) => {
-    if(user) {
-      //转换密码
-      password = sha1(password)
-      UserModel.changePassword(user.email,password).then(result => {
-        if(result.modifiedCount === 1 && result.matchedCount === 1 ) {
-          res.status(200).send({status_code:200})
-        }
-        else{
-          res.status(200).send({status_code:400, msg:'修改失败'})
-        }
-      })
-    }
-    else{
-      res.status(200).send({status_code:403, msg:'用户未找到'})
-    }
-  })
 })
 
 
