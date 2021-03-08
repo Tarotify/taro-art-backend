@@ -90,11 +90,12 @@ router.post('/google/tokenAuth', async function(req, res,next) {
   if (!requestToken){
     res.status(200).send({status_code:403, msg:'google request token is required'})
   }
+
+  res.status(200).send({msg:'test'})
   const result = await axios({
     method: 'get',
     url:`https://oauth2.googleapis.com/tokeninfo?id_token=${requestToken}`,
   })
-  res.status(200).send({status_code:403, msg:result})
   console.log(result)
   if(!result.data.email_verified) {
     res.status(200).send({status_code:401, msg:'google token verify failed'})
