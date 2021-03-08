@@ -84,19 +84,20 @@ router.post('/github/codeAuth', async function(req, res, next) {
  *                     0 =>  email, not user => 自动register
  */
 
-router.post('/google/tokenAuth', async function(req, res,next) {
+router.post('/google/tokenAuth', function(req, res,next) {
   const requestToken = req.fields.token
   console.log(requestToken)
   if (!requestToken){
     res.status(200).send({status_code:403, msg:'google request token is required'})
   }
 
-  res.status(200).send({msg:'test'})
-  const result = await axios({
+  axios({
     method: 'get',
     url:`https://oauth2.googleapis.com/tokeninfo?id_token=${requestToken}`,
+  }).then(res => {
+    console.log(res)
   })
-  console.log(result)
+
   if(!result.data.email_verified) {
     res.status(200).send({status_code:401, msg:'google token verify failed'})
   }
