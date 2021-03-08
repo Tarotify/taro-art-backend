@@ -136,7 +136,6 @@ router.post('/google/tokenAuth', async function(req, res,next) {
         }else{
           res.status(200).send({status_code: 500, msg:'注册错误，请联系Taro'})
         }
-        next(e)
       })
     }else{
       // 已经注册过了
