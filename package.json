@@ -4,7 +4,8 @@
   "description": "taro-art-backend using nodejs and mongoDB",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "start": "node index.js"
   },
   "author": "Raymond Yao",
   "license": "ISC",
